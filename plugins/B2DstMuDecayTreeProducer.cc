@@ -158,7 +158,7 @@ void B2DstMuDecayTreeProducer::produce(edm::Event& iEvent, const edm::EventSetup
        *  ndof <= 4 the data and MC do not seem to agree, and there is an
        *  excess of vertices with low ndof in data. */
       if (vtx.ndof() <= 4) continue;
-      reco::Vertex tmp = vtxu::refit_vertex(iEvent, iSetup, i_vtx, 0, *pfCandHandle);
+      reco::Vertex tmp = vtxu::refit_vertex(iEvent, iSetup, i_vtx, 1, *pfCandHandle);
       if (tmp.isValid()) possibleVtxs.push_back(tmp);
       // else {
         // cout << "[WARNING] Invalid vertex refit for " << i_vtx << endl;
