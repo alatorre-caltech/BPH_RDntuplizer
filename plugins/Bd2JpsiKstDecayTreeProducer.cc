@@ -26,6 +26,7 @@
 #define __dmJpsi_max__ 0.1 // loose cut
 #define __dmKst_max__ 0.13 // loose cut
 #define __dmB0_max__ 0.3 // loose cut
+#define __sigIPpfCand_min__ 2. // loose cut
 
 using namespace std;
 
@@ -175,6 +176,24 @@ void Bd2JpsiKstDecayTreeProducer::produce(edm::Event& iEvent, const edm::EventSe
       assert(false);
     }
 
+    int *valid = (int *) malloc(sizeof(int)*N_pfCand);
+
+    /* Create an array which tells us whether each track is potentially
+     * valid. Here we check dz and dR. This way we don't have to recompute
+     * this quantity for each for loop. */
+    for (uint i = 0; i < N_pfCand; i++) {
+      /* Set it to not valid by default. */
+      valid[i] = 0;
+      const pat::PackedCandidate &ptk = (*pfCandHandle)[i];
+      if (!ptk.hasTrackDetails()) continue;
+      if (ptk.pt() < __pThad_min__) continue;
+      auto tk = vtxu::fix_track(ptk.bestTrack());
+      auto tk_dxy_BS = tk.dxy(*beamSpotHandle);
+      double tk_dxyErr_BS = vtxu::dxyError(tk,*beamSpotHandle);
+      auto tk_sigdxy_BS = fabs(tk_dxy_BS)/tk_dxyErr_BS;
+      if (tk_sigdxy_BS < __sigIPpfCand_min__) continue;
+      valid[i] = 1;
+    }
     int n_K = 0, n_pi = 0, n_Kst = 0, n_B = 0;
 
     /*
@@ -183,6 +202,7 @@ void Bd2JpsiKstDecayTreeProducer::produce(edm::Event& iEvent, const edm::EventSe
     ############################################################################
     */
     for(uint i_k = 0; i_k < N_pfCand; ++i_k) {
+      if (!valid[i_k]) continue;
       const pat::PackedCandidate & K = (*pfCandHandle)[i_k];
       //Require a charged hadron
       if (K.charge() == 0) continue;
@@ -210,6 +230,7 @@ void Bd2JpsiKstDecayTreeProducer::produce(edm::Event& iEvent, const edm::EventSe
       ############################################################################
       */
       for(uint i_pi = 0; i_pi < N_pfCand; ++i_pi) {
+      if (!valid[i_pi]) continue;
         const pat::PackedCandidate & pi = (*pfCandHandle)[i_pi];
         if (!pi.hasTrackDetails()) continue;
         //Require a negative charged hadron
@@ -296,6 +317,10 @@ void Bd2JpsiKstDecayTreeProducer::produce(edm::Event& iEvent, const edm::EventSe
               kinTree->movePointerToTheTop();
               auto B = kinTree->currentParticle();
               auto vtxB = kinTree->currentDecayVertex();
+
+              (*outv)["PV_chi2"].push_back(primaryVtx.chi2());
+              (*outv)["PV_ndof"].push_back(primaryVtx.ndof());
+              (*outv)["PV_nTracks"].push_back(primaryVtx.nTracks());
 
               (*outv)["vtx_PV_x"].push_back(primaryVtx.position().x());
               (*outv)["vtx_PV_y"].push_back(primaryVtx.position().y());
@@ -690,6 +715,8 @@ void Bd2JpsiKstDecayTreeProducer::produce(edm::Event& iEvent, const edm::EventSe
       }
       if(n_B >= 100) break;
     }
+
+    free(valid);
 
     (*outputNtuplizer)["n_K"] = n_K;
     (*outputNtuplizer)["n_pi"] = n_pi;
