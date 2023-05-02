@@ -84,6 +84,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser("Run ntuplizer")
     parser.add_argument("-v", "--ntuplesName", default=None, type=str, help="ntuple tag")
     parser.add_argument("--dry-run", default=False, action='store_true', help="don't actually run the ntuplizer")
+    parser.add_argument("--normal", default=False, action='store_true', help="submit all jobs to the Normal queue")
+    parser.add_argument("--max-jobs", default=None, type=int, help="maximum number of jobs to submit")
     args = parser.parse_args()
 
     if args.ntuplesName is None:
@@ -110,6 +112,10 @@ if __name__ == '__main__':
                 if os.path.exists(output_dir):
                     print(bcolors.FAIL + "Warning: output directory '%s' already exists!" % output_dir + bcolors.ENDC)
                 cmd = "python %s/create-condor-jobs -i %s/../production/inputFiles_%s.txt -o %s/out_CAND.root -c %s/../config/%s -t %s -N %s --maxtime %s" % (FILE_PATH, FILE_PATH,process,output_dir,FILE_PATH,config,ntuplesName,n_files_per_job,max_time)
+                if args.normal:
+                    cmd += " --normal"
+                if args.max_jobs is not None:
+                    cmd += " --max-jobs %i" % args.max_jobs
                 print(cmd)
                 if not args.dry_run:
                     os.system("mkdir -p %s" % output_dir)

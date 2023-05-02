@@ -48,6 +48,8 @@ if __name__ == "__main__":
     parser.add_argument ('--nice', type=int, default=0, help='Run jobs as nice user')
     parser.add_argument ('-f', '--force', action='store_true', default=False, help='Force reprocessing')
     parser.add_argument("--db", type=str, help="database file", default=None)
+    parser.add_argument("--normal", default=False, action='store_true', help="submit all jobs to the Normal queue")
+    parser.add_argument("--max-jobs", default=None, type=int, help="maximum number of jobs to submit")
 
     args = parser.parse_args()
 
@@ -177,6 +179,9 @@ if __name__ == "__main__":
         # twice we don't overwrite the first job
         ID = uuid.uuid1()
 
+        if args.max_jobs is not None and i > args.max_jobs:
+            break
+
         with open(join(outdir,'cfg/file_list_%s_%i.txt' % (batch_id.hex,i)), 'w') as f:
             f.write('\n'.join(files) + '\n')
 
@@ -196,7 +201,9 @@ if __name__ == "__main__":
             fsub.write('error          = %s/out/job_%s_%i.err\n' % (outdir,batch_id.hex,i))
             fsub.write('log            = %s/out/job_%s_%i.log\n' % (outdir,batch_id.hex,i))
             fsub.write('+MaxRuntime    = %i\n' % maxRunTime)
-            if maxRunTime >= 7800:
+            if args.normal:
+                fsub.write('+JobQueue="Normal"\n')
+            elif maxRunTime >= 7800:
                 fsub.write('+JobQueue="Normal"\n')
             else:
                 fsub.write('+JobQueue="Short"\n')
