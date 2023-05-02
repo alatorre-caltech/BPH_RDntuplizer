@@ -61,6 +61,7 @@ PROCESSES = [
     ("BParking_Tag_Bd_DDs1_SoftQCDnonD_TuneCP5_13TeV-pythia8",100,'120m'),
     ("BParking_Tag_Bu_DDs1_SoftQCDnonD_TuneCP5_13TeV-pythia8",100,'120m'),
     ("BParking_Tag_B_DstDXX_SoftQCDnonD_TuneCP5_13TeV-pythia8",100,'120m')
+    ("BParking_Tag_Bu_D2stDs_SoftQCDnonD_TuneCP5_13TeV-pythia8",100,'120m')
 ]
 
 FILESPERJOB = { 'Tag_RD': 40, 'Bd2JpsiKst_RD': 20, 'B2DstMu_RD': 20, 'SSDstMu_RD': 40}
