@@ -8,4 +8,4 @@ jobSubmission/tmp
 *tmp*
 *test*
 crab.log
-*.swp
+.*.sw?
