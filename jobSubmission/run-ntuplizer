@@ -60,7 +60,7 @@ PROCESSES = [
     ("CP_BuToTauNuDstPiPi_SoftQCDnonD_TuneCP5_13TeV-pythia8-evtgen",100,'120m'),
     ("BParking_Tag_Bd_DDs1_SoftQCDnonD_TuneCP5_13TeV-pythia8",100,'120m'),
     ("BParking_Tag_Bu_DDs1_SoftQCDnonD_TuneCP5_13TeV-pythia8",100,'120m'),
-    ("BParking_Tag_B_DstDXX_SoftQCDnonD_TuneCP5_13TeV-pythia8",100,'120m')
+    ("BParking_Tag_B_DstDXX_SoftQCDnonD_TuneCP5_13TeV-pythia8",100,'120m'),
     ("BParking_Bd_JpsiKst_SoftQCDnonD_scale5_TuneCP5_HELAMP_PUc2_10-2-3",100,'120m'),
     ("BParking_Tag_Bu_D2stDs_SoftQCDnonD_TuneCP5_13TeV-pythia8",100,'120m')
 ]
